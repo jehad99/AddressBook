@@ -20,6 +20,7 @@ import { Controller } from "react-hook-form";
 import { Button } from '../components/ui/button';
 import { getDepartments } from "../api/departmentApi";
 import { getJobs } from "../api/jobApi";
+import { start } from "repl";
 
 
 
@@ -43,7 +44,7 @@ const [jobs, setJobs] = useState<Job[]>([]);
     id: number;
     title: string;
   };
-  const [filters, setFilters] = useState({ search: "" });
+  const [filters, setFilters] = useState<{ search: string; fromDate: Date | null; toDate: Date | null }>({ search: "", fromDate: null, toDate: null });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentEntry, setCurrentEntry] = useState<any | null>(null); // For editing
   const [token] = useState(() => localStorage.getItem("token") || "");
@@ -134,6 +135,8 @@ const [jobs, setJobs] = useState<Job[]>([]);
       setLoading(true);
       const data = await getAddressEntries(token, {
         ...filters,
+        fromDate: filters.fromDate ? filters.fromDate?.toISOString().split("T")[0] : null, 
+        toDate: filters.toDate ? filters.toDate?.toISOString().split("T")[0] : null,       
         search: filters.search,
         page: pagination.page,
         pageSize: pagination.pageSize,
@@ -188,7 +191,7 @@ const [jobs, setJobs] = useState<Job[]>([]);
       console.error("Error saving entry:", error);
     }
   };
-  const handleFilterChange = (key: string, value: string) => {
+  const handleFilterChange = (key: string, value: any) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
     setPagination((prev) => ({ ...prev, page: 1 })); // Reset to first page
   };
@@ -200,7 +203,6 @@ const [jobs, setJobs] = useState<Job[]>([]);
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-center text-2xl font-bold mb-6">Address Entries</h1>
 
-      {/* Filters */}
       <div className="flex flex-wrap items-center justify-between mb-4 gap-4">
         <input
           type="text"
@@ -209,14 +211,16 @@ const [jobs, setJobs] = useState<Job[]>([]);
           value={filters.search}
           onChange={(e) => handleFilterChange("search", e.target.value)}
         />
-        {/* <select
-          value={filters.sortOrder}
-          className="select select-bordered"
-          onChange={(e) => handleFilterChange("sortOrder", e.target.value)}
-        >
-          <option value="asc">Ascending</option>
-          <option value="desc">Descending</option>
-        </select> */}
+          <DatePicker
+            value={filters.fromDate} 
+            onChange={(date) => handleFilterChange("fromDate", date)} 
+            placeholder="From Date"
+          />
+          <DatePicker
+            value={filters.toDate} // End date from filters
+            onChange={(date) => handleFilterChange("toDate", date)} 
+            placeholder="To Date"
+          />
         <button className="btn btn-primary" onClick={exportToExcel}>
           Export to Excel
         </button>
@@ -334,7 +338,7 @@ const [jobs, setJobs] = useState<Job[]>([]);
               name="dateOfBirth"
               control={form.control}
               render={({ field }) => (
-                <DatePicker value={field.value} onChange={field.onChange} />
+                <DatePicker value={field.value} onChange={field.onChange} placeholder="Select a date" />
             )}
             />
             </FormControl>

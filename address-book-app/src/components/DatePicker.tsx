@@ -4,10 +4,11 @@ import "react-datepicker/dist/react-datepicker.css";
 
 interface DatePickerProps {
   value: Date | null;
+  placeholder: string | "Select a date";
   onChange: (date: Date | null) => void;
 }
 
-const DatePicker: React.FC<DatePickerProps> = ({ value, onChange }) => {
+const DatePicker: React.FC<DatePickerProps> = ({ value, onChange,  placeholder}) => {
   return (
     <ReactDatePicker
       selected={value}
@@ -16,7 +17,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ value, onChange }) => {
       showMonthDropdown
       dropdownMode="select" // Allows selecting month and year
       dateFormat="yyyy-MM-dd"
-      placeholderText="Select a date"
+      placeholderText={placeholder || "Select a date"}
       className="input input-bordered w-full"
     />
   );
