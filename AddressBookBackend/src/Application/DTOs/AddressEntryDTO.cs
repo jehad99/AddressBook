@@ -10,6 +10,7 @@
         public DateOnly DateOfBirth { get; set; }
         public required string Address { get; set; }
         public required string Email { get; set; }
-        public string? Photo { get; set; }
+        public IFormFile? Photo { get; set; } 
+        public string? PhotoUrl { get; set; }
     }
 }

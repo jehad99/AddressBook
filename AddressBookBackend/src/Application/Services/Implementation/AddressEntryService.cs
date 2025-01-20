@@ -46,9 +46,26 @@ namespace AddressBook.src.Application.Services.Implementation
             
             var addressEntries = await this.repository.AddressEntryRepository.GetFilteredEntriesAsync(queryParameters);
             var addressEntryDtos = this.mapper.Map<List<AddressEntryDTO>>(addressEntries.Items);
+            await Parallel.ForEachAsync(addressEntryDtos, async (dto, cancellationToken) =>
+            {
+                if (!string.IsNullOrEmpty(dto.PhotoUrl))
+                {
+                    dto.Photo = await ConvertBase64ToIFormFileAsync(dto.PhotoUrl, "photo.jpg", "image/jpeg");
+                }
+            });
             return new PaginatedList<AddressEntryDTO>(addressEntryDtos, addressEntries.TotalCount, addressEntries.CurrentPage, addressEntries.PageSize);
         }
+        private async Task<IFormFile> ConvertBase64ToIFormFileAsync(string base64String, string fileName, string contentType)
+        {
+            byte[] fileBytes = Convert.FromBase64String(base64String);
 
+            var stream = new MemoryStream(fileBytes);
+            return new FormFile(stream, 0, fileBytes.Length, "file", fileName)
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = contentType
+            };
+        }
         public async Task<AddressEntryDTO> GetByIdAsync(int id)
         {
             var addressEntry = await this.repository.AddressEntryRepository.GetByIdAsync(id, false);

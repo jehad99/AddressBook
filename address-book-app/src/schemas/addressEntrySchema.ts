@@ -14,6 +14,7 @@ export const addressEntrySchema = z.object({
     .string()
     .nonempty("Job is required")
     .transform((val) => Number(val)), 
+    photo: z.instanceof(File).optional(),
 });
 
 export type AddressEntrySchema = z.infer<typeof addressEntrySchema>;

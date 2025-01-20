@@ -23,7 +23,7 @@ export const createAddressEntry = async (token: string, data: Record<string, any
     const response = await axios.post(BASE_URL, data, {
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data",
       },
     });
     return response.data;
@@ -38,7 +38,7 @@ export const updateAddressEntry = async (token: string, id: string, data: Record
     const response = await axios.put(`${BASE_URL}/${id}`, data, {
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data",
       },
     });
     return response.data;

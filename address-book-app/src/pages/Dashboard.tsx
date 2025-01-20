@@ -48,7 +48,7 @@ const [jobs, setJobs] = useState<Job[]>([]);
   const [currentEntry, setCurrentEntry] = useState<any | null>(null); // For editing
   const [token] = useState(() => localStorage.getItem("token") || "");
 
-    const form = useForm<AddressEntrySchema>({
+  const form = useForm<AddressEntrySchema>({
       resolver: zodResolver(addressEntrySchema),
       defaultValues: {
         email: "",
@@ -56,6 +56,7 @@ const [jobs, setJobs] = useState<Job[]>([]);
         dateOfBirth: new Date(1900, 1, 1),
         address: "",
         mobileNumber: "",
+        photo: undefined,
       },
     });
   const exportToExcel = () => {
@@ -91,6 +92,7 @@ const [jobs, setJobs] = useState<Job[]>([]);
         const entry = row.original;
 
         const handleEdit = () => {
+          debugger;
           setCurrentEntry(entry); 
           form.reset({
             ...entry,
@@ -156,6 +158,7 @@ const [jobs, setJobs] = useState<Job[]>([]);
 
 
   const handleSave = async (entryData: any) => {
+    debugger;
     const transformedData = {
       ...entryData,
       departmentId: Number(entryData.departmentId),
@@ -325,7 +328,7 @@ const [jobs, setJobs] = useState<Job[]>([]);
               control={form.control}
               render={({ field }) => (
                 <DatePicker value={field.value} onChange={field.onChange} />
-              )}
+            )}
             />
             </FormControl>
             <FormMessage />
@@ -342,7 +345,8 @@ const [jobs, setJobs] = useState<Job[]>([]);
         <select
           {...field}
           className="select select-bordered w-full"
-          defaultValue=""
+          value={field.value || ""}
+          onChange={(e) => field.onChange(e.target.value)}
         >
           <option value="" disabled>
             Select Department
@@ -369,7 +373,8 @@ const [jobs, setJobs] = useState<Job[]>([]);
         <select
           {...field}
           className="select select-bordered w-full"
-          defaultValue=""
+          value={field.value || ""}
+          onChange={(e) => field.onChange(e.target.value)}
         >
           <option value="" disabled>
             Select Job
@@ -386,6 +391,64 @@ const [jobs, setJobs] = useState<Job[]>([]);
   )}
 />
 
+
+<FormField
+control={form.control}
+name="photo"
+render={({ field }) => {
+  const [preview, setPreview] = useState<string | null>(null);
+  return(
+  <FormItem>
+    <FormLabel>Photo</FormLabel>
+    <FormControl>
+      <div className="relative">
+        <label className="input input-bordered w-full flex items-center">
+          <span className="mr-2">{currentEntry?.photoUrl ? "Change" : "Browse"}</span>
+          <input
+            type="file"
+            {...form.register("photo")}
+            className="absolute inset-0 opacity-0 cursor-pointer"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                const previewUrl = URL.createObjectURL(file);
+                field.onChange(file); // Update the form state with the selected file
+                setPreview(previewUrl); // Set the preview URL for display
+              }
+            }}
+          />
+          {preview? (
+          <div className="mt-4">
+            <img
+              src={preview}
+              alt="Preview"
+              className="w-32 h-32 object-cover border border-gray-300 rounded"
+            />
+          </div>
+        ) : (<div className="mt-4">
+          <img
+            src={
+              currentEntry.photoUrl.startsWith("data:image")
+                ? currentEntry.photoUrl // Base64 string
+                : `data:image/jpeg;base64,${currentEntry.photoUrl}` // Append base64 header
+            }
+            alt="Uploaded Photo"
+            className="w-32 h-32 object-cover border border-gray-300 rounded"
+          />
+        </div>
+      )}
+          <span className="ml-auto text-gray-500">
+            {field.value?.name || currentEntry?.fileName || "No file selected"}
+          </span>
+        </label>
+      </div>
+    </FormControl>
+    
+  </FormItem>
+)}}
+/>
+
+      
       <Button type="submit" className='w-full'>Save</Button>
   </form>
         </Form>

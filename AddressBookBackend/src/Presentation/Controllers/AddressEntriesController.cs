@@ -34,15 +34,37 @@ namespace AddressBook.src.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] AddressEntryDTO dto)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> Create([FromForm] AddressEntryDTO dto)
         {
+            if (dto.Photo != null)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await dto.Photo.CopyToAsync(memoryStream);
+                    byte[] fileBytes = memoryStream.ToArray();
+                    dto.PhotoUrl = Convert.ToBase64String(fileBytes);
+                }
+            }
+
             await _service.AddressEntryService.AddEntryAsync(dto);
             return Ok();
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] AddressEntryDTO dto)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> Update(int id, [FromForm] AddressEntryDTO dto)
         {
+            if (dto.Photo != null)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await dto.Photo.CopyToAsync(memoryStream);
+                    byte[] fileBytes = memoryStream.ToArray();
+                    dto.PhotoUrl = Convert.ToBase64String(fileBytes);
+                }
+            }
+
             await _service.AddressEntryService.UpdateEntryAsync(id, dto);
             return Ok();
         }
