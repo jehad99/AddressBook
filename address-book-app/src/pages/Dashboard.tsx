@@ -129,6 +129,7 @@ const [jobs, setJobs] = useState<Job[]>([]);
   ];
 
   const fetchEntries = async () => {
+    debugger;
     try {
       setLoading(true);
       const data = await getAddressEntries(token, {
@@ -158,8 +159,9 @@ const [jobs, setJobs] = useState<Job[]>([]);
   
   // Update entries when the page or filters change
   useEffect(() => {
-    fetchEntries();
-  }, [pagination.page, filters]);
+    if (jobs.length > 0 && departments.length > 0) {
+      fetchEntries();
+    }  }, [pagination.page, filters, jobs, departments]);
 
 
   const handleSave = async (entryData: any) => {
