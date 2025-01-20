@@ -131,6 +131,8 @@ const [jobs, setJobs] = useState<Job[]>([]);
       setLoading(true);
       const data = await getAddressEntries(token, {
         ...filters,
+        search: filters.search,
+        sortOrder: filters.sortOrder,
         page: pagination.page,
         pageSize: pagination.pageSize,
       });
@@ -142,6 +144,16 @@ const [jobs, setJobs] = useState<Job[]>([]);
       setLoading(false);
     }
   };
+  
+  const handlePageChange = (newPage: number) => {
+    setPagination((prev) => ({ ...prev, page: newPage }));
+  };
+  
+  // Update entries when the page or filters change
+  useEffect(() => {
+    fetchEntries();
+  }, [pagination.page, filters]);
+
 
   const handleSave = async (entryData: any) => {
     const transformedData = {
@@ -210,7 +222,17 @@ const [jobs, setJobs] = useState<Job[]>([]);
       >
         <FaPlus /> Add Entry
       </button>
-      <DataTable columns={columns} data={entries} />
+<DataTable
+  columns={columns}
+  data={entries}
+  pagination={{
+    page: pagination.page,
+    pageSize: pagination.pageSize,
+    totalCount: pagination.totalCount,
+    onPageChange: handlePageChange,
+  }}
+/>      
+      
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
