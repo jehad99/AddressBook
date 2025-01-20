@@ -83,8 +83,8 @@ const [jobs, setJobs] = useState<Job[]>([]);
     { accessorKey: "email", header: "Email" },
     { accessorKey: "dateOfBirth", header: "Date of Birth" },
     { accessorKey: "address", header: "Address" },
-    { accessorKey: "jobId", header: "Job ID" },
-    { accessorKey: "departmentId", header: "Department ID" },
+    { accessorKey: "jobTitle", header: "Job" },
+    { accessorKey: "departmentName", header: "Department" },
     {
       id: "actions",
       header: "Actions",
@@ -137,7 +137,13 @@ const [jobs, setJobs] = useState<Job[]>([]);
         page: pagination.page,
         pageSize: pagination.pageSize,
       });
-      setEntries(data.items);
+      const enhancedEntries = data.items.map((i:any) => ({
+        ...i,
+        jobTitle: jobs.find((job) => job.id === i.jobId)?.title || "N/A",
+        departmentName: departments.find((dept) => dept.id === i.departmentId)?.name || "N/A",
+      }));
+  
+      setEntries(enhancedEntries);
       setPagination((prev) => ({ ...prev, totalCount: data.totalCount }));
     } catch (err: any) {
       setError(err.message || "Error fetching entries");
