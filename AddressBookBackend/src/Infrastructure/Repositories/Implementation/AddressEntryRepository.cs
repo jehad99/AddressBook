@@ -45,7 +45,7 @@ namespace AddressBook.src.Infrastructure.Repositories.Implementation
         {
             var query = GetAllByUserId(queryParams.UserId,false)
                 .ApplyFilters(queryParams)
-                .ApplySorting(queryParams.SortBy, queryParams.SortOrder);
+                .OrderByDescending(e => e.Id);
 
             var totalRecords = await query.CountAsync();
             var paginatedData = await query

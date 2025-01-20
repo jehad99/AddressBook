@@ -10,7 +10,12 @@ namespace AddressBook.src.Presentation.Extensions
         {
             // Filtering
             if (!string.IsNullOrEmpty(parameters.Search))
-                query = query.Where(e => e.FullName.Contains(parameters.Search) || e.Email.Contains(parameters.Search));
+                query = query.Where(e => e.FullName.Contains(parameters.Search) 
+                || e.Email.Contains(parameters.Search)
+                || e.Address.Contains(parameters.Search)
+                || e.Department.Name.Contains(parameters.Search)
+                || e.Job.Title.Contains(parameters.Search)
+                );
 
             if (parameters.JobId.HasValue)
                 query = query.Where(e => e.JobId == parameters.JobId);

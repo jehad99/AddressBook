@@ -43,7 +43,7 @@ const [jobs, setJobs] = useState<Job[]>([]);
     id: number;
     title: string;
   };
-  const [filters, setFilters] = useState({ search: "", sortOrder: "asc" });
+  const [filters, setFilters] = useState({ search: "" });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentEntry, setCurrentEntry] = useState<any | null>(null); // For editing
   const [token] = useState(() => localStorage.getItem("token") || "");
@@ -134,7 +134,6 @@ const [jobs, setJobs] = useState<Job[]>([]);
       const data = await getAddressEntries(token, {
         ...filters,
         search: filters.search,
-        sortOrder: filters.sortOrder,
         page: pagination.page,
         pageSize: pagination.pageSize,
       });
@@ -202,14 +201,14 @@ const [jobs, setJobs] = useState<Job[]>([]);
           value={filters.search}
           onChange={(e) => handleFilterChange("search", e.target.value)}
         />
-        <select
+        {/* <select
           value={filters.sortOrder}
           className="select select-bordered"
           onChange={(e) => handleFilterChange("sortOrder", e.target.value)}
         >
           <option value="asc">Ascending</option>
           <option value="desc">Descending</option>
-        </select>
+        </select> */}
         <button className="btn btn-primary" onClick={exportToExcel}>
           Export to Excel
         </button>
