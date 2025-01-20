@@ -91,7 +91,13 @@ const [jobs, setJobs] = useState<Job[]>([]);
         const entry = row.original;
 
         const handleEdit = () => {
-          setCurrentEntry(entry); // Set current entry for editing
+          setCurrentEntry(entry); 
+          form.reset({
+            ...entry,
+            departmentId: entry.departmentId.toString(), 
+            jobId: entry.jobId.toString(),            
+            dateOfBirth: new Date(entry.dateOfBirth),  
+          });
           setIsModalOpen(true);
         };
 
@@ -142,6 +148,7 @@ const [jobs, setJobs] = useState<Job[]>([]);
       ...entryData,
       departmentId: Number(entryData.departmentId),
       jobId: Number(entryData.jobId),
+      id: currentEntry?.id,
     };
     debugger;
     try {
@@ -196,7 +203,8 @@ const [jobs, setJobs] = useState<Job[]>([]);
       <button
         className="btn btn-primary mb-4 flex items-center gap-2"
         onClick={() => {
-          setCurrentEntry(null); // Clear entry for Add mode
+          setCurrentEntry(null); 
+          form.reset();   
           setIsModalOpen(true);
         }}
       >
